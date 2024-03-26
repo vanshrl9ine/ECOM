@@ -1,21 +1,28 @@
 import ProductModel from "../models/productModel.js";
+
+//error handling middlewares
 import ErrorHandler from "../utils/errorHandler.js";
+import AsyncHandler from "../middlewares/catchAsyncerror.js";
+
 
 const Product=ProductModel;
 //create a product
 
 //createproduct-admin
-const createProduct=async(req,res,next)=>{
+const createProduct=AsyncHandler(async(req,res,next)=>{
     const product=await Product.create(req.body);
-    res.status(201).json({
+    res.status(201).json(
+        {
         success:true,
         product
 
-    })
+    }
+    )
 }
+);
 
 //update product--admin
-const updateProduct=async(req,res,next)=>{
+const updateProduct=AsyncHandler(async(req,res,next)=>{
     let product=Product.findById(req.params.id);
     if(!product){
         return res.status(500).json({
@@ -29,9 +36,9 @@ const updateProduct=async(req,res,next)=>{
         success:true,
         product
     })
-}
+});
 //delete project
-const deleteProduct=async(req,res,next)=>{
+const deleteProduct=AsyncHandler(async(req,res,next)=>{
  const product=await Product.findById(req.params.id);
  if(!product){
     return res.status(500).json({
@@ -46,11 +53,11 @@ const deleteProduct=async(req,res,next)=>{
     product
 
  })
-}
+});
 
 
 
-const getAllProducts=async(req,res)=>{
+const getAllProducts=AsyncHandler(async(req,res)=>{
     const products=await Product.find();
     res.status(200).json({
         success:true,
@@ -58,7 +65,7 @@ const getAllProducts=async(req,res)=>{
     
     }
     )
-}
+});
 //get product details for a single project
 
 
