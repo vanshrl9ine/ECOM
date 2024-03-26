@@ -1,4 +1,5 @@
 import ProductModel from "../models/productModel.js";
+import ErrorHandler from "../utils/errorHandler.js";
 
 const Product=ProductModel;
 //create a product
@@ -64,10 +65,7 @@ const getAllProducts=async(req,res)=>{
 const getProductDetails=async(req,res,next)=>{
     const product=await Product.findById(req.params.id);
  if(!product){
-    return res.status(500).json({
-        success:false,
-        message:"product not found"
-    })
+    return next(new ErrorHandler("product not found",404));
  }
  res.status(200).json({
     success:true,

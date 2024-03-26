@@ -1,12 +1,12 @@
-import ErrorHandler from "../utils/errorHandler";
+import ErrorHandler from "../utils/errorHandler.js";
 
-const errFunc=(err,req,res,next)=>{
+const errmMiddleware=(err,req,res,next)=>{
     err.statusCode=err.statusCode || 500;
     err.message=err.message || "internal server error";
     res.status(err.statusCode).json({
         success:false,
-        error:err,
+        message:err.message,
     })
 }
 
-export default errFunc;
+export default errmMiddleware;
