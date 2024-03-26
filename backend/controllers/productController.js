@@ -47,6 +47,8 @@ const deleteProduct=async(req,res,next)=>{
  })
 }
 
+
+
 const getAllProducts=async(req,res)=>{
     const products=await Product.find();
     res.status(200).json({
@@ -56,6 +58,24 @@ const getAllProducts=async(req,res)=>{
     }
     )
 }
+//get product details for a single project
 
 
-export {getAllProducts,createProduct,updateProduct,deleteProduct};
+const getProductDetails=async(req,res,next)=>{
+    const product=await Product.findById(req.params.id);
+ if(!product){
+    return res.status(500).json({
+        success:false,
+        message:"product not found"
+    })
+ }
+ res.status(200).json({
+    success:true,
+    message:"product found",
+    product
+
+ })
+} 
+
+
+export {getAllProducts,createProduct,updateProduct,deleteProduct,getProductDetails};
