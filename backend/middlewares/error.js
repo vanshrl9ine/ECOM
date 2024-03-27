@@ -5,14 +5,14 @@ const errmMiddleware=(err,req,res,next)=>{
     err.message=err.message || "internal server error";
 
     //wrong mongodb Id error
-    if(error.name=="castError"){
+    if(err.name=="castError"){
         message=`resource not found.Invalid: ${err.path}`;
         err=new ErrorHandler(message,400);
     }
 
     res.status(err.statusCode).json({
         success:false,
-        message:err.stack,
+        message:err.message,
     })
 }
 
