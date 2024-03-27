@@ -10,10 +10,19 @@ class ApiFeatures{
                 $options:"i"//case insensitive
             },
         }:{};
-        console.log(keyword);
+        // console.log(keyword);
         this.query.find({...keyword});
         return this;
         
+    }
+    filter(){
+        const querystringcopy={...this.querystring};//external copy created if spread not used then pass by ref will happen
+        // console.log(querystringcopy);
+        const removeFields=["keyword","page","limit"];
+        removeFields.forEach(key=>delete querystringcopy[key]);
+        // console.log(querystringcopy);
+        this.query=this.query.find(querystringcopy);
+        return this;
     }
 }
 export default ApiFeatures;
