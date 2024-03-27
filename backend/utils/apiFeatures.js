@@ -20,8 +20,14 @@ class ApiFeatures{
         // console.log(querystringcopy);
         const removeFields=["keyword","page","limit"];
         removeFields.forEach(key=>delete querystringcopy[key]);
-        // console.log(querystringcopy);
-        this.query=this.query.find(querystringcopy);
+
+        //filter of price and rating
+        console.log(querystringcopy);
+        let queryStr=JSON.stringify(querystringcopy);
+        queryStr=queryStr.replace(/\b(gt|gte|lt|lte)\b/g,(key)=>`$${key}`);
+
+        
+        this.query=this.query.find(JSON.parse(queryStr));
         return this;
     }
 }
