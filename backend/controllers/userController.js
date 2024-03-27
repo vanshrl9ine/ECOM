@@ -2,6 +2,7 @@ import ErrorHandler from "../utils/errorHandler.js";
 import AsyncHandler from "../middlewares/catchAsyncerror.js";
 
 import userModel from "../models/userModel.js";
+import sendToken from "../utils/jwtToken.js";
 const User=userModel;
 //register a user
 const registerUser=AsyncHandler(async (req,res,next)=>{
@@ -14,11 +15,7 @@ const registerUser=AsyncHandler(async (req,res,next)=>{
         }
     });
 
-    const token=user.getJWTToken();
-    res.status(201).json({
-        success:true,
-        token,
-    })
+    sendToken(user,201,res);
 })
 
 const loginUser=AsyncHandler(async(req,res,next)=>{
@@ -36,10 +33,6 @@ const loginUser=AsyncHandler(async(req,res,next)=>{
     if(!isPasswordMatched){
         return next(new ErrorHandler("invalid email and password",401));
     }
-    const token=user.getJWTToken();
-    res.status(200).json({
-        success:true,
-        token,
-    })
+    sendToken(user,200,res);
 })
 export {registerUser,loginUser};
