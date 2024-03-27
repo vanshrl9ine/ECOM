@@ -13,9 +13,11 @@ const registerUser=AsyncHandler(async (req,res,next)=>{
             url:"profilepicurl"
         }
     });
+
+    const token=user.getJWTToken();
     res.status(201).json({
         success:true,
-        user,
+        token,
     })
 })
 export default registerUser;
