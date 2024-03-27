@@ -22,12 +22,18 @@ class ApiFeatures{
         removeFields.forEach(key=>delete querystringcopy[key]);
 
         //filter of price and rating
-        console.log(querystringcopy);
+        
         let queryStr=JSON.stringify(querystringcopy);
         queryStr=queryStr.replace(/\b(gt|gte|lt|lte)\b/g,(key)=>`$${key}`);
 
         
         this.query=this.query.find(JSON.parse(queryStr));
+        return this;
+    }
+    pagination(resultPerPage){
+        const currentPage=Number(this.querystring.page) || 1;
+        const skip=resultPerPage*(currentPage-1);
+        this.query=this.query.limit(resultPerPage).skip(skip);
         return this;
     }
 }
