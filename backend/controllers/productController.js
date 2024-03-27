@@ -3,6 +3,7 @@ import ProductModel from "../models/productModel.js";
 //error handling middlewares
 import ErrorHandler from "../utils/errorHandler.js";
 import AsyncHandler from "../middlewares/catchAsyncerror.js";
+import ApiFeatures from "../utils/apiFeatures.js";
 
 
 const Product=ProductModel;
@@ -58,7 +59,8 @@ const deleteProduct=AsyncHandler(async(req,res,next)=>{
 
 
 const getAllProducts=AsyncHandler(async(req,res)=>{
-    const products=await Product.find();
+    const apiFeature=new ApiFeatures(Product.find(),req.query).search()
+    const products=await apiFeature.query;
     res.status(200).json({
         success:true,
         products
