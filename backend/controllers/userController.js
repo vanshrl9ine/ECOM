@@ -17,7 +17,7 @@ const registerUser=AsyncHandler(async (req,res,next)=>{
 
     sendToken(user,201,res);
 })
-
+//login user
 const loginUser=AsyncHandler(async(req,res,next)=>{
     const {email,password}=req.body;
 
@@ -35,4 +35,16 @@ const loginUser=AsyncHandler(async(req,res,next)=>{
     }
     sendToken(user,200,res);
 })
-export {registerUser,loginUser};
+//logout user
+const logoutUser=AsyncHandler(async(req,res,next)=>{
+    res.cookie("token",null,{
+        expires:new Date(Date.now()),
+        httpOnly:true
+    })
+    res.status(200).json({
+        success:true,
+        message:"logged out succesfully"
+    })
+})
+
+export {registerUser,loginUser,logoutUser};
