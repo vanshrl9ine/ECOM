@@ -1,6 +1,6 @@
 import ErrorHandler from "../utils/errorHandler.js";
 import AsyncHandler from "./catchAsyncerror.js";
-import cookieParser from "cookie-parser";
+
 import jsonwebtoken from "jsonwebtoken";
 
 
@@ -19,4 +19,15 @@ req.user=await User.findById(decodeData.id);
 next();
 
 });
-export default isAuthenticatedUser;
+
+const authorizeRoles=(...roles)=>{
+    return (req,res,next)=>{
+        if(!roles.includes(req.user.role)){
+            return next(new ErrorHandler(`Role ${req.user.role} is not allowed to access this resource`,403));
+
+        }
+        next();
+    }
+}
+
+export {isAuthenticatedUser,authorizeRoles};
