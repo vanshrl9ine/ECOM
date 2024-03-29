@@ -3,6 +3,8 @@ import AsyncHandler from "../middlewares/catchAsyncerror.js";
 import sendEmail from "../utils/sendEmail.js";
 import userModel from "../models/userModel.js";
 import sendToken from "../utils/jwtToken.js";
+import crypto from 'crypto';
+
 const User = userModel;
 //register a user
 const registerUser = AsyncHandler(async (req, res, next) => {
@@ -16,7 +18,7 @@ const registerUser = AsyncHandler(async (req, res, next) => {
     });
 
     sendToken(user, 201, res);
-})
+});
 //login user
 const loginUser = AsyncHandler(async (req, res, next) => {
     const { email, password } = req.body;
@@ -34,18 +36,34 @@ const loginUser = AsyncHandler(async (req, res, next) => {
         return next(new ErrorHandler("invalid email and password", 401));
     }
     sendToken(user, 200, res);
-})
+});
 //logout user
+// logout user
 const logoutUser = AsyncHandler(async (req, res, next) => {
+    // Check if there's already a token present in the request cookies
+    const token = req.cookies.token;
+
+    // If there's no token, it means the user is already logged out
+    if (!token) {
+        return res.status(200).json({
+            success: true,
+            message: "User is already logged out.",
+        });
+    }
+
+    // If there's a token, remove it from the cookies
     res.cookie("token", null, {
         expires: new Date(Date.now()),
-        httpOnly: true
-    })
+        httpOnly: true,
+    });
+
+    // Send response indicating successful logout
     res.status(200).json({
         success: true,
-        message: "logged out succesfully"
-    })
+        message: "Logged out successfully.",
+    });
 });
+
 
 //forgot password
 const forgotPassword = AsyncHandler(async (req, res, next) => {
@@ -78,5 +96,30 @@ const forgotPassword = AsyncHandler(async (req, res, next) => {
         return next(new ErrorHandler(error.message, 500));
     }
 });
+//reset password
+const resetPassword=AsyncHandler(async(req,res,next)=>{
+    const resetPasswordToken = crypto.createHash("sha256").update(req.params.token).digest("hex");
+    const user=await User.findOne({
+        resetPasswordToken,
+        resetPasswordExpire:{ $gt:Date.now() },
+    })
+    if(!user){
+        return next(new ErrorHandler("reset password token is not valid ha been expired",400));
+    }
+    if(req.body.password!=req.body.confirmPassword){
+        return next(new ErrorHandler("Password does not match",400));
+    }
+    user.password=req.body.password;
+    user.resetPasswordToken=undefined;
+    user.resetPasswordExpire=undefined;
+    await user.save();
+    sendToken(user,200,res);
 
-export { registerUser, loginUser, logoutUser, forgotPassword };
+})
+
+//get active users
+// Assuming you have a database or cache to store token information
+
+
+
+export { registerUser, loginUser, logoutUser, forgotPassword,resetPassword};

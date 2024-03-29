@@ -27,7 +27,7 @@ const authorizeRoles=(...roles)=>{
 
         }
         next();
-    }
-}
+    };
+};
 
 export {isAuthenticatedUser,authorizeRoles};
