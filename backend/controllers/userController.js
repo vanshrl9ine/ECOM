@@ -182,4 +182,40 @@ const getSingleUser=AsyncHandler(async (req,res,next)=>{
         user
     })
 });
-export { registerUser, loginUser, logoutUser, forgotPassword,resetPassword,getUserDetails,updatePassword,updateProfile,getAllUsers,getSingleUser};
+//update user role--admin
+const updateUserRole=AsyncHandler(async(req,res,next)=>{
+    
+    const newUserData={
+        role:req.body.role,
+    }
+    //add avatar changinf option later
+    const user=await User.findByIdAndUpdate(req.params.id,newUserData,{
+        new:true,
+        runValidators:true,
+        useFindandModify:false
+    });
+    if (!user) {
+        return next(new ErrorHandler("User not found", 404));
+    }
+    res.status(200).json({
+        success:true,
+        user
+    });
+});
+//delete user--admin
+const deleteUser=AsyncHandler(async(req,res,next)=>{
+    
+    //I will delete cloudinary url later
+    const user = await User.findByIdAndDelete(req.params.id);
+
+    // Check if the user was not found
+    if (!user) {
+        return next(new ErrorHandler("User not found", 404));
+    }
+
+    res.status(200).json({
+        success: true,
+        message: "User deleted successfully",
+    });
+});
+export { registerUser, loginUser, logoutUser, forgotPassword,resetPassword,getUserDetails,updatePassword,updateProfile,getAllUsers,getSingleUser,updateUserRole,deleteUser};

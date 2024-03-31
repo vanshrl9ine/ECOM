@@ -1,5 +1,5 @@
 import express from "express";
-import {registerUser,loginUser, logoutUser, forgotPassword, resetPassword, getUserDetails, updatePassword, updateProfile, getAllUsers, getSingleUser} from "../controllers/userController.js";
+import {registerUser,loginUser, logoutUser, forgotPassword, resetPassword, getUserDetails, updatePassword, updateProfile, getAllUsers, getSingleUser, updateUserRole, deleteUser} from "../controllers/userController.js";
 
 import { isAuthenticatedUser,authorizeRoles } from "../middlewares/auth.js";
 const userRouter=express.Router();
@@ -14,5 +14,9 @@ userRouter.route("/password/update").put(isAuthenticatedUser,updatePassword);
 userRouter.route("/me/update").put(isAuthenticatedUser,updateProfile);
 
 userRouter.route("/admin/users").get(isAuthenticatedUser,authorizeRoles("admin"),getAllUsers);
-userRouter.route("/admin/user/:id").get(isAuthenticatedUser,authorizeRoles("admin"),getSingleUser);
+
+userRouter.route("/admin/user/:id")
+.get(isAuthenticatedUser,authorizeRoles("admin"),getSingleUser)
+.put(isAuthenticatedUser,authorizeRoles("admin"),updateUserRole)
+.delete(isAuthenticatedUser,authorizeRoles("admin"),deleteUser);
 export default  userRouter;
