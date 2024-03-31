@@ -71,7 +71,7 @@ const forgotPassword = AsyncHandler(async (req, res, next) => {
     if (!user) return next(new ErrorHandler("user not found", 404));
 
     //get reset pass token
-    const resetToken = user.getResetPasswordToken();
+    const resetToken = user.generatePasswordResetToken();
 
     await user.save({ valdateBeforeSave: false });
     const resetPasswordUrl = `${req.protocol}://${req.get("host")}/api/v1/password/reset/${resetToken}`;
