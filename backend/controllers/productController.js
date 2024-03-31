@@ -39,7 +39,7 @@ const updateProduct=AsyncHandler(async(req,res,next)=>{
         product
     })
 });
-//delete project
+//delete product
 const deleteProduct=AsyncHandler(async(req,res,next)=>{
  const product=await Product.findById(req.params.id);
  if(!product){
@@ -88,6 +88,43 @@ const getProductDetails=async(req,res,next)=>{
 
  })
 } 
+//create new review and update
+const createProductReview=AsyncHandler(async (req,res,next)=>{
+    const {rating,comment,productId}=req.body;
+    const review={
+        user:req.user._id,
+        name:req.user.name,
+        rating:Number(rating),
+        comment,
+    }
+    const product=await Product.findById(productId);
+    if (!product) {
+        return next(new ErrorHandler("Product not found", 404));
+    }
+    const isReviewed=product.reviews.find(rev=>rev.user.toString()===req.user._id.toString());
+    if(isReviewed){
+       product.reviews.forEach((rev)=>{
+        if(rev.user.toString()===req.user._id.toString()){
+            rev.rating=rating,
+            rev.comment=comment
+        };
+        
+       });
+    }
+    else{
+        product.reviews.push(review);
+        product.numOfReviews=product.reviews.length;
+    }
+    let totalRatings = 0;
+    product.reviews.forEach(rev => {
+        totalRatings += rev.rating;
+    });
+    product.ratings = totalRatings / product.reviews.length;
 
+    await product.save({validateBeforeSave:false});
+    res.status(200).json({
+        success:true
+    })
+})
 
-export {getAllProducts,createProduct,updateProduct,deleteProduct,getProductDetails};
+export {getAllProducts,createProduct,updateProduct,deleteProduct,getProductDetails,createProductReview};
