@@ -120,11 +120,52 @@ const createProductReview=AsyncHandler(async (req,res,next)=>{
         totalRatings += rev.rating;
     });
     product.ratings = totalRatings / product.reviews.length;
-
+    
     await product.save({validateBeforeSave:false});
     res.status(200).json({
         success:true
     })
-})
+});
+const getAllReviews=AsyncHandler(async(req,res,next)=>{
+    const product=await Product.findById(req.query.productId);
+    if(!product){
+        return next(new ErrorHandler("product doesnt exist",404));
+    }
+    res.status(200).json({
+        success:true,
+        reviews:product.reviews
+    });
+});
+const deleteReview=AsyncHandler(async(req,res,next)=>{
+    const product=await Product.findById(req.query.productId);
+    if(!product){
+        return next(new ErrorHandler("product doesnt exist"));
 
-export {getAllProducts,createProduct,updateProduct,deleteProduct,getProductDetails,createProductReview};
+    }
+    const reviews=product.reviews.filter(rev=>rev._id.toString()!==req.query.id.toString());
+
+    let totalRatings = 0;
+    reviews.forEach(rev => {
+        totalRatings += rev.rating;
+    });
+    
+    const ratings=totalRatings / reviews.length;
+    const numOfReviews=reviews.length;
+
+    await Product.findByIdAndUpdate(req.query.productId,
+        {
+            reviews,
+            ratings,
+            numOfReviews
+        },{
+            new:true,
+            runValidators:true,
+            useFindAndModify:false,
+        }
+    )
+    res.status(200).json({
+        success:true,
+        reviews:product.reviews
+    });
+});
+export {getAllProducts,createProduct,updateProduct,deleteProduct,getProductDetails,createProductReview,getAllReviews,deleteReview};
