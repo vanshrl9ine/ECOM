@@ -41,6 +41,9 @@ const userSchema = new mongoose.Schema({
   resetPasswordExpire: Date,
 });
 
+userSchema.methods.comparePassword = async function (enteredPassword) {
+  return await bcryptjs.compare(enteredPassword, this.password);
+};
 // Hash password before saving to the database
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
@@ -50,9 +53,7 @@ userSchema.pre("save", async function (next) {
 });
 
 // Method to compare entered password with stored hashed password
-userSchema.methods.comparePassword = async function (enteredPassword) {
-  return await bcryptjs.compare(enteredPassword, this.password);
-};
+
 
 // Method to generate JWT token
 userSchema.methods.getJWTToken = function () {
@@ -62,7 +63,7 @@ userSchema.methods.getJWTToken = function () {
 };
 
 // Method to generate and store password reset token
-userSchema.methods.generatePasswordResetToken = function () {
+userSchema.methods.getPasswordResetToken = function () {
   // Generate reset token
   const resetToken = crypto.randomBytes(20).toString("hex");
 

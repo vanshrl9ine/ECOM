@@ -22,7 +22,7 @@ const registerUser = AsyncHandler(async (req, res, next) => {
 //login user
 const loginUser = AsyncHandler(async (req, res, next) => {
     const { email, password } = req.body;
-
+   
     //checking if user has given password and email both
     if (!email || !password) {
         return next(new ErrorHandler("Please enter email and password", 400))
@@ -31,14 +31,14 @@ const loginUser = AsyncHandler(async (req, res, next) => {
     if (!user) {
         return next(new ErrorHandler("Invalid email or password", 401));
     }
-    const isPasswordMatched = user.comparePassword(password);
+    const isPasswordMatched = await user.comparePassword(password);
     if (!isPasswordMatched) {
         return next(new ErrorHandler("invalid email and password", 401));
     }
     sendToken(user, 200, res);
 });
 //logout user
-// logout user
+
 const logoutUser = AsyncHandler(async (req, res, next) => {
     // Check if there's already a token present in the request cookies
     const token = req.cookies.token;
