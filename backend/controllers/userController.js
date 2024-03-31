@@ -142,6 +142,23 @@ const updatePassword=AsyncHandler(async(req,res,next)=>{
 
     sendToken(user,200,res);
 });
+//update user profile
+const updateProfile=AsyncHandler(async(req,res,next)=>{
+    
+    const newUserData={
+        name:req.body.name,
+        email:req.body.email,
+    }
+    //add avatar changinf option later
+    const user=await User.findByIdAndUpdate(req.user.id,newUserData,{
+        new:true,
+        runValidators:true,
+        useFindandModify:false
+    });
 
+    res.status(200).json({
+        success:true
+    });
+});
 
-export { registerUser, loginUser, logoutUser, forgotPassword,resetPassword,getUserDetails,updatePassword};
+export { registerUser, loginUser, logoutUser, forgotPassword,resetPassword,getUserDetails,updatePassword,updateProfile};
