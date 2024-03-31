@@ -161,4 +161,25 @@ const updateProfile=AsyncHandler(async(req,res,next)=>{
     });
 });
 
-export { registerUser, loginUser, logoutUser, forgotPassword,resetPassword,getUserDetails,updatePassword,updateProfile};
+//getallusers
+const getAllUsers=AsyncHandler(async (req,res,next)=>{
+    const users=await User.find();
+    
+    res.status(200).json({
+        success:true,
+        users
+    })
+});
+
+//get particular user
+const getSingleUser=AsyncHandler(async (req,res,next)=>{
+    const user=await User.findById(req.params.id);
+    if(!user){
+        return next(new ErrorHandler(`user doesnt exist with id:${req.params.id}`));
+    }
+    res.status(200).json({
+        success:true,
+        user
+    })
+});
+export { registerUser, loginUser, logoutUser, forgotPassword,resetPassword,getUserDetails,updatePassword,updateProfile,getAllUsers,getSingleUser};
