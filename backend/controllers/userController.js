@@ -117,9 +117,16 @@ const resetPassword=AsyncHandler(async(req,res,next)=>{
 
 })
 
-//get active users
-// Assuming you have a database or cache to store token information
+//get user details
+const getUserDetails=AsyncHandler(async(req,res,next)=>{
+    const user=await User.findById(req.user.id);
+    
+    res.status(200).json({
+        success:true,
+        user,
+    });
+});
 
 
 
-export { registerUser, loginUser, logoutUser, forgotPassword,resetPassword};
+export { registerUser, loginUser, logoutUser, forgotPassword,resetPassword,getUserDetails};
