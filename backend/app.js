@@ -10,8 +10,11 @@ const product=router;
 import userRouter from './routes/userRoute.js';
 const user=userRouter;
 
+import orderRouter from './routes/orderRoutes.js';
+const order=orderRouter
 app.use("/api/v1",product);
 app.use("/api/v1",user);
+app.use("/api/v1",order);
 //middlewares
 
 //error handler middleware
